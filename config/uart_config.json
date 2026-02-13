@@ -1,5 +1,16 @@
 
 {
+"register_size": "{{REGISTER_SIZE}}",
+
+  "base_address": "{{BASE_ADDRESS}}",
+
+  "register_offsets": {
+    "CTRL": "{{CTRL_OFFSET}}",
+    "FRAME": "{{FRAME_OFFSET}}",
+    "BAUD": "{{BAUD_OFFSET}}",
+    "STATUS": "{{STATUS_OFFSET}}",
+    "DATA": "{{DATA_OFFSET}}"
+  },
   "abstract_uart": {
     "required_registers": [
       "CTRL",
