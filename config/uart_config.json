@@ -1,137 +1,85 @@
-{
-  "schema_version": 1,
-  "protocol": "UART",
 
+{
   "abstract_uart": {
-    "description": "Universal UART interface definition",
     "required_registers": [
       "CTRL",
+      "FRAME",
+      "BAUD",
       "STATUS",
-      "DATA_TX",
-      "DATA_RX",
-      "BAUD"
+      "DATA"
     ],
-    "required_features": [
-      "enable_uart",
-      "enable_tx",
-      "enable_rx",
-      "set_baudrate",
-      "tx_empty_flag",
-      "rx_not_empty_flag"
-    ],
-    "bit_positions": {
-      "enable_uart": 0,
-      "enable_tx": 1,
-      "enable_rx": 2,
-      "tx_empty_flag": 3,
-      "rx_not_empty_flag": 4
-    }
-  },
 
-  "hardware_configs": {
-    "STM32F407": {
-      "bus": "USART1",
-      "base_address": "0x40011000",
-      "register_map": {
-        "CTRL": "CR1",
-        "STATUS": "SR",
-        "DATA_TX": "DR",
-        "DATA_RX": "DR",
-        "BAUD": "BRR"
+    "bitfields": {
+      "CTRL": {
+        "uart_enable": {
+          "position": "{{CTRL_UART_ENABLE_POS}}",
+          "width": "{{CTRL_UART_ENABLE_WIDTH}}"
+        },
+        "tx_enable": {
+          "position": "{{CTRL_TX_ENABLE_POS}}",
+          "width": "{{CTRL_TX_ENABLE_WIDTH}}"
+        },
+        "rx_enable": {
+          "position": "{{CTRL_RX_ENABLE_POS}}",
+          "width": "{{CTRL_RX_ENABLE_WIDTH}}"
+        },
+        "tx_interrupt_enable": {
+          "position": "{{CTRL_TX_INT_POS}}",
+          "width": 1
+        },
+        "rx_interrupt_enable": {
+          "position": "{{CTRL_RX_INT_POS}}",
+          "width": 1
+        }
       },
-      "register_offsets": {
-        "CR1": "0x00",
-        "CR2": "0x04",
-        "CR3": "0x08",
-        "BRR": "0x0C",
-        "SR": "0x10",
-        "DR": "0x14"
+
+      "FRAME": {
+        "word_length": {
+          "position": "{{FRAME_WORD_LENGTH_POS}}",
+          "width": "{{FRAME_WORD_LENGTH_WIDTH}}"
+        },
+        "parity_enable": {
+          "position": "{{FRAME_PARITY_ENABLE_POS}}",
+          "width": 1
+        },
+        "parity_type": {
+          "position": "{{FRAME_PARITY_TYPE_POS}}",
+          "width": 1
+        },
+        "stop_bits": {
+          "position": "{{FRAME_STOP_BITS_POS}}",
+          "width": "{{FRAME_STOP_BITS_WIDTH}}"
+        }
       },
-      "bit_positions": {
-        "CR1": {
-          "SBK": 0, "RWU": 1, "RE": 2, "TE": 3, "IDLEIE": 4,
-          "RXNEIE": 5, "TCIE": 6, "TXEIE": 7, "PEIE": 8,
-          "PS": 9, "PCE": 10, "WAKE": 11, "M": 12, "UE": 13, "OVER8": 15
+
+      "BAUD": {
+        "baud_divider": {
+          "position": "{{BAUD_DIV_POS}}",
+          "width": "{{BAUD_DIV_WIDTH}}"
+        }
+      },
+
+      "STATUS": {
+        "tx_empty": {
+          "position": "{{STATUS_TX_EMPTY_POS}}",
+          "width": 1
         },
-        "CR2": {
-          "ADD": 0, "LBDL": 5, "LBDIE": 6,
-          "STOP": {"position": 8, "width": 2},
-          "CLKEN": 10, "CPOL": 11, "CPHA": 12, "LBCL": 13, "LINEN": 15
+        "rx_not_empty": {
+          "position": "{{STATUS_RXNE_POS}}",
+          "width": 1
         },
-        "CR3": {
-          "EIE": 0, "IREN": 1, "IRLP": 2, "HDSEL": 3, "NACK": 4,
-          "SCEN": 5, "DMAR": 6, "DMAT": 7, "RTSE": 8, "CTSE": 9,
-          "CTSIE": 10, "ONEBIT": 12
-        },
-        "SR": {
-          "PE": 0, "FE": 1, "NE": 2, "ORE": 3, "IDLE": 4,
-          "RXNE": 5, "TC": 6, "TXE": 7, "LBD": 8, "CTS": 9
-        },
-        "DR": {
-          "DATA": {"position": 0, "width": 9}
-        },
-        "BRR": {
-          "DIV_Fraction": {"position": 0, "width": 4},
-          "DIV_Mantissa": {"position": 4, "width": 12}
+        "overrun_error": {
+          "position": "{{STATUS_ORE_POS}}",
+          "width": 1
+        }
+      },
+
+      "DATA": {
+        "data": {
+          "position": "{{DATA_POS}}",
+          "width": "{{DATA_WIDTH}}"
         }
       }
-    },
-
-    "ESP32": {
-      "bus": "UART0",
-      "base_address": "0x60000000",
-      "register_map": {
-        "CTRL": "UART_CONF0_REG",
-        "STATUS": "UART_STATUS_REG",
-        "DATA_TX": "UART_FIFO_REG",
-        "DATA_RX": "UART_FIFO_REG",
-        "BAUD": "UART_CLKDIV_REG"
-      },
-      "register_offsets": {
-        "UART_CONF0_REG": "0x00",
-        "UART_STATUS_REG": "0x1C",
-        "UART_FIFO_REG": "0x08",
-        "UART_CLKDIV_REG": "0x14"
-      },
-      "bit_positions": {
-        "UART_CONF0_REG": {"UART_EN": 0, "TX_EN": 2, "RX_EN": 3, "PARITY_EN": 4, "PARITY_MODE": 5},
-        "UART_STATUS_REG": {"TXFIFO_EMPTY": 0, "RXFIFO_FULL": 1, "FRM_ERR": 2, "PARITY_ERR": 3, "BRK_DET": 4},
-        "UART_FIFO_REG": {"DATA": {"position": 0, "width": 8}},
-        "UART_CLKDIV_REG": {"DIV_INT": {"position": 0, "width": 12}, "DIV_FRAC": {"position": 12, "width": 4}}
-      }
-    },
-
-    "ATmega328P": {
-      "bus": "USART0",
-      "base_address": "0x00",
-      "register_map": {
-        "CTRL": "UCSR0B",
-        "STATUS": "UCSR0A",
-        "DATA_TX": "UDR0",
-        "DATA_RX": "UDR0",
-        "BAUD": "UBRR0"
-      },
-      "register_offsets": {
-        "UCSR0A": "0x00",
-        "UCSR0B": "0x01",
-        "UCSR0C": "0x02",
-        "UBRR0": "0x09",
-        "UDR0": "0x0C"
-      },
-      "bit_positions": {
-        "UCSR0A": {"RXC0": 7, "TXC0": 6, "UDRE0": 5, "FE0": 4, "DOR0": 3, "UPE0": 2},
-        "UCSR0B": {"RXCIE0": 7, "TXCIE0": 6, "UDRIE0": 5, "RXEN0": 4, "TXEN0": 3, "UCSZ02": 2, "RXB80": 1, "TXB80": 0},
-        "UCSR0C": {"UMSEL01": 7, "UMSEL00": 6, "UPM01": 5, "UPM00": 4, "USBS0": 3, "UCSZ01": 2, "UCSZ00": 1, "UCPOL0": 0},
-        "UDR0": {"DATA": {"position": 0, "width": 8}},
-        "UBRR0": {"DIV": {"position": 0, "width": 12}}
-      }
     }
-  },
-
-  "user_config": {
-    "selected_mcu": "STM32F407",
-    "baudrate_value": "0x0683",
-    "enable_tx": true,
-    "enable_rx": true
   }
 }
